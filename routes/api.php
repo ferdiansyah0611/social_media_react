@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:api'], function(){
 	Route::group(['namespace' => 'Api\User'], function(){
+		Route::apiResource('story-data', 'UserDataController');
+		Route::apiResource('story-view', 'StoryViewController');
+	});
+	Route::group(['namespace' => 'Api\User'], function(){
 		Route::apiResource('user-block', 'UserBlockController');
 		Route::apiResource('user', 'UserController');
 		Route::apiResource('user-friend', 'UserFriendController');
