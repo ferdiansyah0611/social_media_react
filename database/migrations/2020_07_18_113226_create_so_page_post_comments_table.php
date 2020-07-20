@@ -16,7 +16,7 @@ class CreateSoPagePostCommentsTable extends Migration
         Schema::create('so_page_post_comments', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('so_page_data_id')->unsigned();
+            $table->bigInteger('so_page_post_data_id')->unsigned();
             $table->longText('comment');
             $table->string('image')->nullable();
             $table->string('video')->nullable();

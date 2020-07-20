@@ -43,6 +43,62 @@ class User extends Authenticatable
 
     /**
      * Relationship table
+     * @return App\Models\Posted\SoPageData
+    */
+    public function withPageData()
+    {
+        return $this->hasMany('App\Models\Posted\SoPageData', 'user_id');
+    }
+
+    /**
+     * Relationship table
+     * @return App\Models\Posted\SoPageFollow
+    */
+    public function withPageFollow()
+    {
+        return $this->hasMany('App\Models\Posted\SoPageFollow', 'user_id');
+    }
+
+    /**
+     * Relationship table
+     * @return App\Models\Posted\SoPagePostComment
+    */
+    public function withPagePostComment()
+    {
+        return $this->hasMany('App\Models\Posted\SoPagePostComment', 'user_id');
+    }
+
+    /**
+     * Relationship table
+     * @return App\Models\Posted\SoPagePostData
+    */
+    public function withPagePostData()
+    {
+        return $this->hasMany('App\Models\Posted\SoPagePostData', 'user_id');
+    }
+
+    /**
+     * Relationship table
+     * @return App\Models\Posted\SoPagePostLike
+    */
+    public function withPagePostLike()
+    {
+        return $this->hasMany('App\Models\Posted\SoPagePostLike', 'user_id');
+    }
+
+    /**
+     * Relationship table
+     * @return App\Models\Posted\SoPagePostSubComment
+    */
+    public function withPagePostSubComment()
+    {
+        return $this->hasMany('App\Models\Posted\SoPagePostSubComment', 'user_id');
+    }
+
+    /* DIR > App\Models\Posted */
+
+    /**
+     * Relationship table
      * @return App\Models\Posted\SoPostComment
     */
     public function withPostDataComment()
