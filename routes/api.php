@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware' => 'auth:api'], function(){
+	Route::group(['namespace' => 'Api\User'], function(){
+		Route::apiResource('user-block', 'UserBlockController');
+		Route::apiResource('user', 'UserController');
+		Route::apiResource('user-friend', 'UserFriendController');
+		Route::apiResource('user-log-activity', 'UserLogActivityController');
+		Route::apiResource('user-message', 'UserMessageController');
+		Route::apiResource('user-notification', 'UserNotificationController');
+		Route::apiResource('user-report', 'UserReportController');
+	});
 });
