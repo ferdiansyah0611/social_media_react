@@ -15,6 +15,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'auth:api'], function(){
+	Route::group(['namespace' => 'Api\Posted'], function(){
+		Route::apiResource('post-comment', 'PostCommentController');
+		Route::apiResource('post-comment-like', 'PostCommentLikeController');
+		Route::apiResource('post-data', 'PostDataController');
+		Route::apiResource('post-like', 'PostLikeController');
+		Route::apiResource('post-sub-comment', 'PostSubCommentController');
+	});
 	Route::group(['namespace' => 'Api\Profile'], function(){
 		Route::apiResource('profile-avatar', 'ProfileAvatarController');
 		Route::apiResource('profile', 'ProfileController');
