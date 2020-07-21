@@ -39,60 +39,60 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    /* DIR > App\Models\Posted */
+    /* DIR > App\Models\Page */
 
     /**
      * Relationship table
-     * @return App\Models\Posted\SoPageData
+     * @return App\Models\Page\SoPageData
     */
     public function withPageData()
     {
-        return $this->hasMany('App\Models\Posted\SoPageData', 'user_id');
+        return $this->hasMany('App\Models\Page\SoPageData', 'user_id');
     }
 
     /**
      * Relationship table
-     * @return App\Models\Posted\SoPageFollow
+     * @return App\Models\Page\SoPageFollow
     */
     public function withPageFollow()
     {
-        return $this->hasMany('App\Models\Posted\SoPageFollow', 'user_id');
+        return $this->hasMany('App\Models\Page\SoPageFollow', 'user_id');
     }
 
     /**
      * Relationship table
-     * @return App\Models\Posted\SoPagePostComment
+     * @return App\Models\Page\SoPagePostComment
     */
     public function withPagePostComment()
     {
-        return $this->hasMany('App\Models\Posted\SoPagePostComment', 'user_id');
+        return $this->hasMany('App\Models\Page\SoPagePostComment', 'user_id');
     }
 
     /**
      * Relationship table
-     * @return App\Models\Posted\SoPagePostData
+     * @return App\Models\Page\SoPagePostData
     */
     public function withPagePostData()
     {
-        return $this->hasMany('App\Models\Posted\SoPagePostData', 'user_id');
+        return $this->hasMany('App\Models\Page\SoPagePostData', 'user_id');
     }
 
     /**
      * Relationship table
-     * @return App\Models\Posted\SoPagePostLike
+     * @return App\Models\Page\SoPagePostLike
     */
     public function withPagePostLike()
     {
-        return $this->hasMany('App\Models\Posted\SoPagePostLike', 'user_id');
+        return $this->hasMany('App\Models\Page\SoPagePostLike', 'user_id');
     }
 
     /**
      * Relationship table
-     * @return App\Models\Posted\SoPagePostSubComment
+     * @return App\Models\Page\SoPagePostSubComment
     */
     public function withPagePostSubComment()
     {
-        return $this->hasMany('App\Models\Posted\SoPagePostSubComment', 'user_id');
+        return $this->hasMany('App\Models\Page\SoPagePostSubComment', 'user_id');
     }
 
     /* DIR > App\Models\Posted */
