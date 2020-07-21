@@ -15,6 +15,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'auth:api'], function(){
+	Route::group(['namespace' => 'Api\Page'], function(){
+		Route::apiResource('page-category', 'PageCategoryController');
+		Route::apiResource('page-data', 'PageDataController');
+		Route::apiResource('page-follow', 'PageFollowController');
+		Route::apiResource('page-post-comment', 'PagePostCommentController');
+		Route::apiResource('page-post-data', 'PagePostDataController');
+		Route::apiResource('page-post-ike', 'PagePostLikeController');
+		Route::apiResource('page-post-sub-comment', 'PagePostSubCommentController');
+	});
 	Route::group(['namespace' => 'Api\Posted'], function(){
 		Route::apiResource('post-comment', 'PostCommentController');
 		Route::apiResource('post-comment-like', 'PostCommentLikeController');
