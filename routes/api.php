@@ -21,7 +21,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 		Route::apiResource('group-post-comment', 'GroupPostCommentController');
 		Route::apiResource('group-post-comment-like', 'GroupPostCommentLikeController');
 		Route::apiResource('group-post-data', 'GroupPostDataController');
-		Route::apiResource('group-post-ike', 'GroupPostLikeController');
+		Route::apiResource('group-post-like', 'GroupPostLikeController');
 		Route::apiResource('group-post-sub-comment', 'GroupPostSubCommentController');
 		Route::apiResource('group-role', 'GroupRoleController');
 	});
