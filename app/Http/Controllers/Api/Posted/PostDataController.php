@@ -40,7 +40,7 @@ class PostDataController extends Controller
             $data['user_id'] = request()->user()->id;
             if($request->file('image')){
                 $validator_file = Validator::make($request->all(), [
-                    'image' => 'required'
+                    'image' => 'required',
                     'image.*' => 'required|file|image|mimes:jpg,jpeg,png|max:20000'
                 ]);
                 if($validator->fails()){
@@ -106,7 +106,7 @@ class PostDataController extends Controller
             $model = SoPostData::where('id', $soPostData);
             if($request->file('image')){
                 $validator_file = Validator::make($request->all(), [
-                    'image' => 'required'
+                    'image' => 'required',
                     'image.*' => 'required|file|image|mimes:jpg,jpeg,png|max:20000'
                 ]);
                 if($validator->fails()){
@@ -114,7 +114,7 @@ class PostDataController extends Controller
                 } else {
                     if($model->get()->pluck('image')[0] !== null){
                         foreach($model->get()->pluck('image')[0] as $imageDelete){
-                            File::delete(storage_path('app/public/asset/' . $imageDelete))
+                            File::delete(storage_path('app/public/asset/' . $imageDelete));
                         }
                     }
                     foreach($request->file('image') as $image){
@@ -135,7 +135,7 @@ class PostDataController extends Controller
                 } else {
                     if($model->get()->pluck('video')[0] !== null){
                         foreach($model->get()->pluck('video')[0] as $videoDelete){
-                            File::delete(storage_path('app/public/asset/' . $videoDelete))
+                            File::delete(storage_path('app/public/asset/' . $videoDelete));
                         }
                     }
                     foreach($request->file('video') as $video){
@@ -162,12 +162,12 @@ class PostDataController extends Controller
         $model = SoPostData::where('id', $soPostData);
         if($model->get()->pluck('image')[0] !== null){
             foreach($model->get()->pluck('image')[0] as $image){
-                File::delete(storage_path('app/public/asset/' . $image))
+                File::delete(storage_path('app/public/asset/' . $image));
             }
         }
         if($model->get()->pluck('video')[0] !== null){
             foreach($model->get()->pluck('video')[0] as $video){
-                File::delete(storage_path('app/public/asset/' . $video))
+                File::delete(storage_path('app/public/asset/' . $video));
             }
         }
     }
