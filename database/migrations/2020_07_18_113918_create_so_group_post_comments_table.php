@@ -17,7 +17,6 @@ class CreateSoGroupPostCommentsTable extends Migration
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('so_group_data_id')->unsigned();
-            $table->string('like');
             $table->longText('comment');
             $table->string('image')->nullable();
             $table->string('video')->nullable();
