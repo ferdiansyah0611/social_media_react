@@ -15,8 +15,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => 'auth:api'], function(){
-	Route::group(['namespace' => 'Api\User'], function(){
-		Route::apiResource('story-data', 'UserDataController');
+	Route::group(['namespace' => 'Api\Profile'], function(){
+		Route::apiResource('profile-avatar', 'ProfileAvatarController');
+		Route::apiResource('profile', 'ProfileController');
+		Route::apiResource('profile-education', 'ProfileEducationController');
+		Route::apiResource('profile-work', 'ProfileWorkController');
+	});
+	Route::group(['namespace' => 'Api\Story'], function(){
+		Route::apiResource('story-data', 'StoryDataController');
 		Route::apiResource('story-view', 'StoryViewController');
 	});
 	Route::group(['namespace' => 'Api\User'], function(){
