@@ -38,36 +38,11 @@ class Routing extends React.Component {
         super(props)
     }
     render() {
-        /*function AuthButton() {
-            let history = useHistory();
-            return Auth.isAuthentication ? (
-                <p>Welcome!{" "}
-                	<button onClick={() => {Auth.logout(() => history.push("/"));}}>Sign out</button>
-    			</p>
-            ) : (
-                <p>You are not logged in.</p>
-            );
-        }
-		function PublicPage() {
-		    return <h3>Public</h3>;
-		}*/
 		Auth.check();
 		return (
     		<Router>
       			<div>
-      			  	{/*<AuthButton />
-      			  	<ul>
-      			  	  	<li>
-      			  	  	  	<Link to="/public">Public Page</Link>
-      			  	  	</li>
-      			  	  	<li>
-      			  	  	  	<Link to="/protected">Protected Page</Link>
-      			  	  	</li>
-      			  	</ul>*/}
       			  	<Switch>
-      			  	  	{/*<Route path="/public">
-      			  	    	<PublicPage />
-      			  	  	</Route>*/}
                         <Route exact path="/" component={Login}></Route>
                         <Route path="/register">
                           <Register />
@@ -78,9 +53,6 @@ class Routing extends React.Component {
       			  	  	<PrivateRoute path="/home">
       			  	    	<Home />
       			  	  	</PrivateRoute>
-      			  	  	{/*<PrivateRoute path="/protected">
-      			  	    	<Home />
-      			  	  	</PrivateRoute>*/}
       			  	</Switch>
       			</div>
     		</Router>
