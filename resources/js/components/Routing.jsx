@@ -1,85 +1,94 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {BrowserRouter as Router, Route, Link, Switch, useHistory} from 'react-router-dom'
-
-import ForgetPassword from '../auth/ForgetPassword'
-import Login from '../auth/Login'
-import Register from '../auth/Register'
-import VerifiedEmail from '../auth/VerifiedEmail'
+import React from "react";
+import ReactDOM from 'react-dom';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    Redirect,
+    useHistory,
+    useLocation
+} from "react-router-dom";
+import Auth from './Auth'
+import Login from './auth/Login'
+import Register from './auth/Register'
+import ForgetPassword from './auth/ForgetPassword'
+import VerifiedEmail from './auth/VerifiedEmail'
 import Home from './../page/Home'
 
-const fakeAuth = {
-  	isAuthenticated: false,
-  	authenticate(cb){
-  		if(window.localStorage.getItem('token')){
-  			var token = window.localStorage.getItem('token')
-  			fakeAuth.isAuthenticated = true
-  		}
-  	},
-  	signout(cb){
-  		if(window.localStorage.getItem('token')){
-  			window.localStorage.removeItem('token')
-  	  		fakeAuth.isAuthenticated = false;
-  		}
-  	}
-}
-
 function PrivateRoute({ children, ...rest }) {
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        fakeAuth.isAuthenticated ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/",
-              state: { from: location }
-            }}
-          />
-        )
-      }
-    />
-  );
+        return (
+            <Route {...rest} render={({ location }) =>
+      		Auth.isAuthentication ? (
+      		  	children
+      		) : (
+      		<Redirect
+      		    to={{
+      		      	pathname: "/login",
+      		      	state: { from: location }
+      		    }}
+      		/>
+      		)
+      	}/>
+   	);
 }
 
-class Routing extends React.Component{
-	constructor(props){
-		super(props)
-	}
-	render(){
+class Routing extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+    render() {
+        /*function AuthButton() {
+            let history = useHistory();
+            return Auth.isAuthentication ? (
+                <p>Welcome!{" "}
+                	<button onClick={() => {Auth.logout(() => history.push("/"));}}>Sign out</button>
+    			</p>
+            ) : (
+                <p>You are not logged in.</p>
+            );
+        }
+		function PublicPage() {
+		    return <h3>Public</h3>;
+		}*/
+		Auth.check();
 		return (
-			<React.Fragment>
-				<Router>
-					<Switch>
-						<Route path="/register">
-							<Register />
-						</Route>
-						<Route path="/verified-email">
-							<VerifiedEmail />
-						</Route>
-						<Route path="/forget-password">
-							<ForgetPassword />
-						</Route>
-						<Route path="/">
-							<Login />
-						</Route>
-						<PrivateRoute path="/admin">
-							
-						</PrivateRoute>
-						<PrivateRoute path="/home">
-							<Home />
-						</PrivateRoute>
-					</Switch>
-				</Router>
-			</React.Fragment>
+    		<Router>
+      			<div>
+      			  	{/*<AuthButton />
+      			  	<ul>
+      			  	  	<li>
+      			  	  	  	<Link to="/public">Public Page</Link>
+      			  	  	</li>
+      			  	  	<li>
+      			  	  	  	<Link to="/protected">Protected Page</Link>
+      			  	  	</li>
+      			  	</ul>*/}
+      			  	<Switch>
+      			  	  	{/*<Route path="/public">
+      			  	    	<PublicPage />
+      			  	  	</Route>*/}
+                        <Route exact path="/" component={Login}></Route>
+                        <Route path="/register">
+                          <Register />
+                        </Route>
+                        <Route path="/forget-password">
+                          <ForgetPassword />
+                        </Route>
+      			  	  	<PrivateRoute path="/home">
+      			  	    	<Home />
+      			  	  	</PrivateRoute>
+      			  	  	{/*<PrivateRoute path="/protected">
+      			  	    	<Home />
+      			  	  	</PrivateRoute>*/}
+      			  	</Switch>
+      			</div>
+    		</Router>
 		)
 	}
 }
 
-export default Routing;
-
-if (document.getElementById('app')) {
-    ReactDOM.render(<Routing />, document.getElementById('app'));
-}
+ReactDOM.render(
+    <Routing />,
+    document.getElementById('app')
+);

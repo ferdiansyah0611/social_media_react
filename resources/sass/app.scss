@@ -1,8 +1,227 @@
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
-
 // Variables
 @import 'variables';
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+@import url(https://fonts.googleapis.com/css?family=Quicksand:300,500);
+
+body{
+  background-color: #f0f2f5;
+  font-family: 'Quicksand', sans-serif;
+}
+body::-webkit-scrollbar,
+.position-sticky.scroll::-webkit-scrollbar,
+.friend-request::-webkit-scrollbar,
+.position-sticky.default::-webkit-scrollbar,
+.default::-webkit-scrollbar{
+  width: 10px;
+  height: 10px;
+  background-color: white;
+}
+body::-webkit-scrollbar-thumb,
+.position-sticky.scroll::-webkit-scrollbar-thumb,
+.friend-request::-webkit-scrollbar-thumb,
+.position-sticky.default::-webkit-scrollbar-thumb,
+.default::-webkit-scrollbar-thumb{
+  width: 5px;
+  background-color: #cecece;
+}
+.container-xl{
+  margin-top: 115px;
+}
+.sidebar-menu{
+  top: 46px;
+  margin-left: 100%;
+  height: 100%;
+  width: 300px;
+  position: fixed;
+  z-index: -11;
+  transition: 1s all;
+  opacity: 0;
+  visibility: hidden;
+}
+.sidebar-menu > div{
+  opacity: 0;
+}
+.opacity-sidebar{
+  top: 0;
+  margin-left: 100%;
+  height: 100%;
+  width: calc(100% - 300px);
+  position: fixed;
+  z-index: -11;
+  transition: 1s all;
+  display: none;
+}
+/*nav*/
+img.sidebar-profile{
+  max-width:50px;
+  max-height: 50px;
+}
+ul.sidebar-profile-list{
+  margin-left: 57px;margin-top: -7px;width: 240px;
+}
+.dropdown-nav-right > a.dropdown-toggle > img.rounded-circle{
+  width: 50px;
+  max-height: 38px;
+}
+.dropdown-nav-right > div.dropdown-menu{
+  margin-left: 63%;
+}
+ul.menu-mobile-ul > li > a > span.material-icons{
+  margin-left: 16px;
+}
+.nav-search{
+  font-size: 14px;
+}
+/*sideleft*/
+div.sideleft > div.position-sticky{
+  max-height: 37em;
+  height: 37em;
+}
+/*sideright*/
+div.sideright > div.position-sticky{
+  max-height: 37em;
+  height: 37em;
+  margin-left: -14px;
+}
+div.sideright-el-2 > div.position-sticky{
+  max-height: 37em;
+  height: 37em;
+}
+
+.avatar-post{
+  height: 60px;
+  max-height: 60px;
+}
+a.nav-link.d-inline.active{
+  border-bottom: 5px solid #007bff;
+}
+a.nav-link.text-dark.text-decoration-none:hover {
+    background-color: var(--bs-light);
+}
+.dropdown-toggle.after-none::after{
+  border: 0;
+  content: none;
+}
+.dropdown-toggle.before-none::before{
+  border: 0;
+  margin-right: 0!important;
+  display: block;
+  content: none;
+}
+/*dropdown in menu*/
+ul.friend-request{
+  max-height: 250px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+ul.friend-request > li > .row > .col-9 > a.text-decoration-none{
+  font-size: 12px;
+}
+.list-online{
+  height: 80px;
+  max-height: 80px;
+}
+ul.menu-mobile-ul{
+  background-color: #e0e0e0;
+}
+.menu-mobile-ul a:hover{
+  background-color: #0e0e0e0f;
+}
+.dropdown-menu[aria-labelledby="friends_request"]{
+  margin-left: 39% !important;
+  width: 300px;
+}
+/*utilites*/
+.fs-12{
+  font-size: 12px;
+}
+.fs-13{
+  font-size: 13px;
+}
+.fs-14{
+  font-size: 14px;
+}
+.fs-15{
+  font-size: 15px;
+}
+.fs-20{
+  font-size: 20px !important;
+}
+.fs-30{
+  font-size: 30px !important;
+}
+.icon-24{
+  font-size: 20px;
+}
+.fs-25{
+  font-size: 25px !important;
+}
+.mt-70px{
+  margin-top: 70px;
+}
+.ml-14px{
+  margin-left: 14px;
+}
+.ml-5em{
+  margin-left: 5em !important;
+}
+.mh-29em{
+  max-height: 29em;
+}
+.right-0{
+  right: 0;
+}
+.top-0{
+  top: 0;
+}
+.left-0{
+  left: 0;
+}
+.fixed-bottom{
+  z-index: 9999999999;
+}
+.lt-space-2px{
+  letter-spacing: 2px;
+}
+.pointer{
+  cursor: pointer;
+}
+.cursor-text{
+  cursor: text;
+}
+.overflow-y-auto{
+  overflow-y: auto;
+}
+.transition-02s{
+  transition: all 0.2s ease 0s;
+}
+@media screen and (min-width: 0px) and (max-width: 576px){
+  .position-xs-absolute{
+    position: absolute;
+  }
+  .avatar-post{
+    width: 46px !important;
+  }
+}
+
+.opacity-search{
+  position: fixed;
+  z-index: 98;
+  width: 100%;
+  height: 100%;
+  background-color: #0000007a;
+  top: 56px;
+  left: 0;
+}
+.opacity-search-none{
+  position: none;
+  z-index: -1;
+  width: 0;
+  height: 0;
+  background-color: #0000007a;
+  top: 56px;
+  left: 0;
+  visibility: hidden;
+}
