@@ -8,6 +8,7 @@ use Validator;
 use File;
 /*models*/
 use App\Models\Posted\SoPostData;
+use App\User;
 
 class PostDataController extends Controller
 {
@@ -18,7 +19,7 @@ class PostDataController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withPostData()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withPostData()->paginate(25), 200);
     }
 
     /**

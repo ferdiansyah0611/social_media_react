@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 import ReactDOM from 'react-dom'
 import './Home.css'
 import lava from './APP'
+
 export class NavBar extends Component {
     constructor(props) {
         super(props);
@@ -14,9 +15,11 @@ export class NavBar extends Component {
     }
     onLogOut(event) {
         if (window.localStorage.getItem('token') && window.localStorage.getItem('user')) {
-        	window.localStorage.removeItem('token');
-        	window.localStorage.removeItem('user');
-        	window.location.href = '/';
+        	if(confirm('Do you want exit this application ?')) {
+	        	window.localStorage.removeItem('token');
+	        	window.localStorage.removeItem('user');
+	        	window.location.href = '/';
+        	}
         }
     }
     render() {
@@ -295,6 +298,12 @@ export class NavBar extends Component {
 export class SideRight extends Component {
     constructor(props) {
         super(props)
+
+    }
+    componentDidMount(){
+    	lavaInstance.stickyScroll({
+    		query: '.position-sticky.scroll'
+		})
     }
     render() {
         return (
@@ -378,6 +387,11 @@ export class SideRight extends Component {
 export class SideLeft extends Component {
     constructor(props) {
         super(props)
+    }
+    componentDidMount(){
+    	lavaInstance.stickyScroll({
+    		query: '.position-sticky.scroll'
+		})
     }
     render() {
         return (

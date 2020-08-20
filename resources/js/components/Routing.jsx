@@ -17,19 +17,19 @@ import VerifiedEmail from './auth/VerifiedEmail'
 import Home from './../page/Home'
 
 function PrivateRoute({ children, ...rest }) {
-        return (
-            <Route {...rest} render={({ location }) =>
-      		Auth.isAuthentication ? (
-      		  	children
-      		) : (
-      		<Redirect
-      		    to={{
-      		      	pathname: "/login",
-      		      	state: { from: location }
-      		    }}
-      		/>
-      		)
-      	}/>
+    return (
+        <Route {...rest} render={({ location }) =>
+     	Auth.isAuthentication ? (
+     	  	children
+     	) : (
+     	    <Redirect
+     	        to={{
+     	          	pathname: "/login",
+     	          	state: { from: location }
+     	        }}
+     	    />
+     	)
+        }/>
    	);
 }
 
@@ -45,10 +45,10 @@ class Routing extends React.Component {
       			  	<Switch>
                         <Route exact path="/" component={Login}></Route>
                         <Route path="/register">
-                          <Register />
+                            <Register />
                         </Route>
                         <Route path="/forget-password">
-                          <ForgetPassword />
+                            <ForgetPassword />
                         </Route>
       			  	  	<PrivateRoute path="/home">
       			  	    	<Home />
