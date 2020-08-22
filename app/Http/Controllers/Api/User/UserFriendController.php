@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Validator;
 /*model*/
 use App\Models\User\SoUserFriend;
+use App\User;
 
 class UserFriendController extends Controller
 {
@@ -17,7 +18,7 @@ class UserFriendController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withUserFriend()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withUserFriend()->paginate(25), 200);
     }
 
     /**

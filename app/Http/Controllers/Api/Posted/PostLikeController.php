@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Validator;
 /*models*/
 use App\Models\Posted\SoPostLike;
+use App\User;
 
 class PostLikeController extends Controller
 {
@@ -17,7 +18,7 @@ class PostLikeController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withPostLike()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withPostLike()->paginate(25), 200);
     }
 
     /**

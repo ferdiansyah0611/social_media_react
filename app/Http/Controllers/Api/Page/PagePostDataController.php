@@ -8,6 +8,7 @@ use Validator;
 use File;
 /*models*/
 use App\Models\Page\SoPagePostData;
+use App\User;
 
 class PagePostDataController extends Controller
 {
@@ -18,7 +19,7 @@ class PagePostDataController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withPagePostData()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withPagePostData()->paginate(25), 200);
     }
 
     /**

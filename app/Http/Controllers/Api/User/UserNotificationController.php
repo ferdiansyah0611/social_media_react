@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Validator;
 /*models*/
 use App\Models\User\SoUserNotification;
+use App\User;
 
 class UserNotificationController extends Controller
 {
@@ -17,7 +18,7 @@ class UserNotificationController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withUserNotification()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withUserNotification()->paginate(25), 200);
     }
 
     /**

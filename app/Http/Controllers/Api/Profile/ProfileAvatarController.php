@@ -8,6 +8,7 @@ use Validator;
 use File;
 /*models*/
 use App\Models\Profile\SoProfileAvatar;
+use App\User;
 
 class ProfileAvatarController extends Controller
 {
@@ -18,7 +19,7 @@ class ProfileAvatarController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withProfileAvatar()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withProfileAvatar()->paginate(25), 200);
     }
 
     /**

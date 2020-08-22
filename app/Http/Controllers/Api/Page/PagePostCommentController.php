@@ -8,6 +8,7 @@ use Validator;
 use File;
 /*models*/
 use App\Models\Page\SoPagePostComment;
+use App\User;
 
 class PagePostCommentController extends Controller
 {
@@ -18,7 +19,7 @@ class PagePostCommentController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withPagePostComment()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withPagePostComment()->paginate(25), 200);
     }
 
     /**

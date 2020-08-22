@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Validator;
 /*models*/
 use App\Models\Story\SoStoryView;
+use App\User;
 
 class StoryViewController extends Controller
 {
@@ -17,7 +18,7 @@ class StoryViewController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withStoryView()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withStoryView()->paginate(25), 200);
     }
 
     /**

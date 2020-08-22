@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Validator;
 /*models*/
 use App\Models\User\SoUserReport;
+use App\User;
 
 class UserReportController extends Controller
 {
@@ -17,7 +18,7 @@ class UserReportController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withUserReport()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withUserReport()->paginate(25), 200);
     }
 
     /**

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Validator;
 /*models*/
 use App\Models\Page\SoPageFollow;
+use App\User;
 
 class PageFollowController extends Controller
 {
@@ -17,7 +18,7 @@ class PageFollowController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withPageFollow()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withPageFollow()->paginate(25), 200);
     }
 
     /**

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Validator;
 /*models*/
 use App\Models\Posted\SoPostCommentLike;
+use App\User;
 
 class PostCommentLikeController extends Controller
 {
@@ -17,7 +18,7 @@ class PostCommentLikeController extends Controller
      */
     public function index()
     {
-         return response()->json(App\User::find(request()->user()->id)->withPostDataCommentLike()->paginate(25), 200);
+         return response()->json(User::find(request()->user()->id)->withPostDataCommentLike()->paginate(25), 200);
     }
 
     /**

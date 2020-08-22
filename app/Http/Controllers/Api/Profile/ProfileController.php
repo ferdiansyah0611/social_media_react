@@ -8,6 +8,7 @@ use Validator;
 use File;
 /*models*/
 use App\Models\Profile\SoProfile;
+use App\User;
 
 class ProfileController extends Controller
 {
@@ -18,7 +19,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withProfile()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withProfile()->paginate(25), 200);
     }
 
     /**

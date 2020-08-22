@@ -8,6 +8,7 @@ use Validator;
 use File;
 /*models*/
 use App\Models\Story\SoStoryData;
+use App\User;
 
 class StoryDataController extends Controller
 {
@@ -18,7 +19,7 @@ class StoryDataController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withStoryData()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withStoryData()->paginate(25), 200);
     }
 
     /**

@@ -8,6 +8,7 @@ use Validator;
 use File;
 /*models*/
 use App\Models\Posted\SoPostSubComment;
+use App\User;
 
 class PostSubCommentController extends Controller
 {
@@ -18,7 +19,7 @@ class PostSubCommentController extends Controller
      */
     public function index()
     {
-        return response()->json(App\User::find(request()->user()->id)->withPostSubComment()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withPostSubComment()->paginate(25), 200);
     }
 
     /**
