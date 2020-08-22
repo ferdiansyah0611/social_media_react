@@ -1,66 +1,107 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import axios from 'axios'
 import Mystate from '../components/State'
 
 import {NavBar, SideRight, SideLeft} from './Template'
 
-class Home extends React.Component{
-	constructor(props){
+class Home extends React.Component {
+	constructor(props) {
 		super(props)
 		this.state = {
-			story: [],
-			postData: [],
-			toDBPost: {
-				description: '',
-				image: '',
-				video: '',
-				privacy: ''
-			}
+			APP_Data_Story: [],
+			APP_Data_Post: [],
+			APP_PostUpload_description: '',
+			APP_PostUpload_image: '',
+			APP_PostUpload_video: '',
+			APP_PostUpload_privacy: '',
+			APP_ModalPost_like: [],
+			APP_ModalPost_comment: [],
+
+			LatestPaginate_Story: '',
 		}
-		this.componentDidMount = this.componentDidMount.bind(this)
+		this.POST_POSTED = this.POST_POSTED.bind(this)
+		this.inputChange = this.inputChange.bind(this)
+		this.ClickModalPostLike = this.ClickModalPostLike.bind(this)
+		this.ClickModalPostComment = this.ClickModalPostComment.bind(this)
 	}
-	componentDidMount(){
+	componentDidMount() {
 		document.title = 'Home';
-		this.postData();
+		this.GET_POSTED();
 	}
-	async submitPosted(event, $url = '/api/post-data', $method = 'post') {
-		let AllData = new FormData()
+	inputChange(event) {
+        this.setState({[event.target.name]: event.target.value});
+    }
+	async POST_POSTED(event, $url = '/api/post-data', $method = 'post') {
+		event.preventDefault()
+		let Form = new FormData()
+		Form.append('description', this.state.APP_PostUpload_description)
+		Form.append('image', this.state.APP_PostUpload_image)
+		Form.append('video', this.state.APP_PostUpload_video)
+		Form.append('privacy', this.state.APP_PostUpload_privacy)
 		await axios({
 			url: $url,
 			method: $method,
 			headers : {
-                'Authorization' : 'Bearer ' + Mystate.token
+                'Authorization' : Mystate.token
             },
-            data: AllData
+            data: Form
 		}).then(value => {
-			
+			console.log(value)
 		}).catch(error => {
 			console.error(error)
 		})
 	}
-	async postData($url = '/api/post-data', $method = 'get'){
+	async GET_POSTED($url = '/api/post-data?page=1', $method = 'get') {
 		await axios({
 			url: $url,
 			method: $method,
 			headers : {
-                'Authorization' : 'Bearer ' + Mystate.token
+                'Authorization' : Mystate.token
             }
 		}).then(value => {
-			var dataEach = value.data.data;
+			let DataEach = value.data.data;
 			this.setState(state => {
-				return{
-					postData: dataEach
-				}
-			})
-			this.state.postData.map(v => {
-				console.log(v)
+				return{ APP_Data_Post: DataEach }
 			})
 		}).catch(error => {
 			console.error(error)
 		})
 	}
-	render(){
+	async ClickModalPostLike(event, $url = '/api/page-post-like?page=1', $method = 'get') {
+		await axios({
+			url: $url,
+			method: $method,
+			headers : {
+                'Authorization' : Mystate.token
+            }
+		}).then(value => {
+			let DataEach = value.data.data;
+			this.setState(state => {
+				return{ APP_ModalPost_like: DataEach }
+			})
+			console.log(DataEach)
+		}).catch(error => {
+			console.error(error)
+		})
+	}
+	async ClickModalPostComment(event, $url = '/api/page-post-comment', $method = 'get') {
+		await axios({
+			url: $url,
+			method: $method,
+			headers : {
+                'Authorization' : Mystate.token
+            }
+		}).then(value => {
+			let DataEach = value.data.data;
+			this.setState(state => {
+				return{ APP_ModalPost_comment: DataEach }
+			})
+			console.log(DataEach)
+		}).catch(error => {
+			console.error(error)
+		})
+	}
+	render() {
 		const Modal = {
 			StoryView: () => {
 				return (
@@ -356,77 +397,77 @@ class Home extends React.Component{
 				)
 			}
 		};
-		const PostCard = this.state.postData.map((value, i) => {
-			    return <div key={i} className="card bg-white mt-2 border-0 shadow-sm animate__animated animate__fadeInUp">
-			        <div className="card-body">
-			            <div className="row">
-			                <div className="col-2 text-md-center">
-			                    <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" className="rounded-circle avatar-post" alt="example" width="100%" />
-			                </div>
-			                <div className="col-5">
-			                    <p className="text-truncate mb-0">
-			                        <a href="./ferdiansyah" className="text-decoration-none text-dark">Ferdiansyah</a>
-			                    </p>
-			                    <span className="p-0 text-truncate text-lowercase text-dark font-weight-light fs-13">{value.created_at}</span>
-			                </div>
-			                <div className="col-5">
-			                    <div className="dropdown dropleft float-right">
-			                        <a className="btn btn-light rounded dropdown-toggle before-none" href="#" name="dropdownMenuLink3" id="dropdownMenuLink3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			                            <i className="fas fa-ellipsis-v"></i>
+		const PostCard = this.state.APP_Data_Post.map((value, i) => {
+			return <div key={i} className="card bg-white mt-2 border-0 shadow-sm animate__animated animate__fadeInUp">
+			    <div className="card-body">
+			        <div className="row">
+			            <div className="col-2 text-md-center">
+			                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" className="rounded-circle avatar-post" alt="example" width="100%" />
+			            </div>
+			            <div className="col-5">
+			                <p className="text-truncate mb-0">
+			                    <a href="./ferdiansyah" className="text-decoration-none text-dark">Ferdiansyah</a>
+			                </p>
+			                <span className="p-0 text-truncate text-lowercase text-dark font-weight-light fs-13">{value.created_at}</span>
+			            </div>
+			            <div className="col-5">
+			                <div className="dropdown dropleft float-right">
+			                    <a className="btn btn-light rounded dropdown-toggle before-none" href="#" name="dropdownMenuLink3" id="dropdownMenuLink3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			                        <i className="fas fa-ellipsis-v"></i>
+			                    </a>
+			                    <div className="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="dropdownMenuLink3">
+			                        <a className="dropdown-item" href="#">
+			                            <span className="material-icons">save</span> 
+			                            <span className="position-absolute ml-1">Save link</span>
 			                        </a>
-			                        <div className="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="dropdownMenuLink3">
-			                            <a className="dropdown-item" href="#">
-			                                <span className="material-icons">save</span> 
-			                                <span className="position-absolute ml-1">Save link</span>
-			                            </a>
-			                            <a className="dropdown-item" href="#">
-			                                <span className="material-icons">remove_circle_outline</span>
-			                                <span className="position-absolute ml-1">Hide post</span>
-			                            </a>
-			                            <a className="dropdown-item" href="#">
-			                                <span className="material-icons">person_remove</span>
-			                                <span className="position-absolute ml-1">Unfollow</span>
-			                            </a>
-			                            <a className="dropdown-item" href="#">
-			                                <span className="material-icons">content_copy</span>
-			                                <span className="position-absolute ml-1">Copy link</span>
-			                            </a>
-			                            <a className="dropdown-item" href="#">
-			                                <span className="material-icons">report</span>
-			                                <span className="position-absolute ml-1">Report</span>
-			                            </a>
-			                        </div>
-			                    </div>
-			                </div>
-			                <div className="col-12 mt-1 text-dark fs-15">
-			                    {value.description}
-			                    <div className="row">
-			                        <div className="col">
-			                            <img src="./media/kelly-repreza-vdsDBby6Tn4-unsplash.jpg" alt="example" className="img-fluid" />
-			                        </div>
+			                        <a className="dropdown-item" href="#">
+			                            <span className="material-icons">remove_circle_outline</span>
+			                            <span className="position-absolute ml-1">Hide post</span>
+			                        </a>
+			                        <a className="dropdown-item" href="#">
+			                            <span className="material-icons">person_remove</span>
+			                            <span className="position-absolute ml-1">Unfollow</span>
+			                        </a>
+			                        <a className="dropdown-item" href="#">
+			                            <span className="material-icons">content_copy</span>
+			                            <span className="position-absolute ml-1">Copy link</span>
+			                        </a>
+			                        <a className="dropdown-item" href="#">
+			                            <span className="material-icons">report</span>
+			                            <span className="position-absolute ml-1">Report</span>
+			                        </a>
 			                    </div>
 			                </div>
 			            </div>
-			        </div>
-			        <div className="card-footer font-weight-light bg-transparent border-0">
-			            <button type="button" className="text-dark btn border-0" data-toggle="modal" data-target="#modal-like-post">1000 people like this post</button>
-			            <div className="row">
-			                <button type="button" className="btn btn-outline-light text-dark border-0 col">
-			                    <i className="far fa-thumbs-up pl-1"></i>
-			                    1000
-			                </button>
-			                <button type="button" className="btn btn-outline-light text-dark border-0 col" data-toggle="modal" data-target="#modal-comment-post">
-			                    <i className="far fa-comment pl-1"></i>
-			                    10
-			                </button>
-			                <button type="button" className="btn btn-outline-light text-dark border-0 col" data-toggle="modal" data-target="#modal-share-post">
-			                    <i className="far fa-share-square pl-1"></i>
-			                    10
-			                </button>
+			            <div className="col-12 mt-1 text-dark fs-15">
+			                {value.description}
+			                <div className="row">
+			                    <div className="col">
+			                        <img src="./media/kelly-repreza-vdsDBby6Tn4-unsplash.jpg" alt="example" className="img-fluid" />
+			                    </div>
+			                </div>
 			            </div>
 			        </div>
 			    </div>
-	        })
+			    <div className="card-footer font-weight-light bg-transparent border-0">
+			        <button onClick={this.ClickModalPostLike} data-id={value.id} type="button" className="text-dark btn border-0" data-toggle="modal" data-target="#modal-like-post">1000 people like this post</button>
+			        <div className="row">
+			            <button onClick={this.LikePost} data-id={value.id} type="button" className="btn btn-outline-light text-dark border-0 col">
+			                <i className="far fa-thumbs-up pl-1"></i>
+			                1000
+			            </button>
+			            <button onClick={this.ClickModalPostComment} data-id={value.id} type="button" className="btn btn-outline-light text-dark border-0 col" data-toggle="modal" data-target="#modal-comment-post">
+			                <i className="far fa-comment pl-1"></i>
+			                10
+			            </button>
+			            <button type="button" className="btn btn-outline-light text-dark border-0 col" data-toggle="modal" data-target="#modal-share-post">
+			                <i className="far fa-share-square pl-1"></i>
+			                10
+			            </button>
+			        </div>
+			    </div>
+			</div>
+	    });
 		return (
 			<React.Fragment>
 			<NavBar/>
@@ -461,25 +502,25 @@ class Home extends React.Component{
 	                            <div className="previous-story rounded-circle shadow-sm">
 	                                <span className="material-icons p-1">chevron_left</span>
 	                            </div>
-	                            <form onSubmit={this.componentDidMount}>
+	                            <form onSubmit={this.POST_POSTED}>
 	                                <div className="input-group mb-1">
-	                                    <select className="form-select form-select-sm" aria-label=".form-select-sm">
+	                                    <select onChange={this.inputChange} name="APP_PostUpload_privacy" className="form-select form-select-sm" aria-label=".form-select-sm">
 	                                        <option>Choose privacy...</option>
-	                                        <option value="">Only me</option>
-	                                        <option value="">Fiends</option>
-	                                        <option value="">Public</option>
+	                                        <option value="onlyme">Only me</option>
+	                                        <option value="friends">Fiends</option>
+	                                        <option value="public">Public</option>
 	                                    </select>
 	                                </div>
-	                                <textarea className="form-control mt-2" placeholder="What do you think now ?" rows="4"></textarea>
+	                                <textarea onChange={this.inputChange} name="APP_PostUpload_description" className="form-control mt-2" placeholder="What do you think now ?" rows="4"></textarea>
 	                                <div className="form-file form-file-sm mt-2">
-	                                    <input type="file" className="form-file-input" id="image_upload_post" accept=".jpg,.png,.jpeg" multiple/>
+	                                    <input onChange={this.inputChange} name="APP_PostUpload_image" type="file" className="form-file-input" id="image_upload_post" accept=".jpg,.png,.jpeg" multiple/>
 	                                    <label className="form-file-label" htmlFor="image_upload_post">
 	                                        <span className="form-file-text">Choose file image...</span>
 	                                        <span className="form-file-button">Browse</span>
 	                                    </label>
 	                                </div>
 	                                <div className="form-file form-file-sm mt-2">
-	                                    <input type="file" className="form-file-input" id="video_upload_post" accept=".mp4" multiple/>
+	                                    <input onChange={this.inputChange} name="APP_PostUpload_video" type="file" className="form-file-input" id="video_upload_post" accept=".mp4" multiple/>
 	                                    <label className="form-file-label" htmlFor="video_upload_post">
 	                                        <span className="form-file-text">Choose file video...</span>
 	                                        <span className="form-file-button">Browse</span>

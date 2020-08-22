@@ -1,7 +1,9 @@
 import React, { Component, Fragment } from 'react'
 import ReactDOM from 'react-dom'
+import {Link} from 'react-router-dom'
 import './Home.css'
 import lava from './APP'
+import Mystate from '../components/State'
 
 export class NavBar extends Component {
     constructor(props) {
@@ -298,14 +300,36 @@ export class NavBar extends Component {
 export class SideRight extends Component {
     constructor(props) {
         super(props)
-
+        this.state = {
+        	APP_Data_Page: [],
+        }
     }
-    componentDidMount(){
+    componentDidMount() {
+    	this.GET_PAGE();
     	lavaInstance.stickyScroll({
     		query: '.position-sticky.scroll'
-		})
+		});
     }
+    async GET_PAGE($url = '/api/page-data', $method = 'get') {
+		await axios({
+			url: $url,
+			method: $method,
+			headers : {
+                'Authorization' : Mystate.token
+            }
+		}).then(value => {
+			let DataEach = value.data.data;
+			this.setState(state => {
+				return{ APP_Data_Page: DataEach }
+			})
+		}).catch(error => {
+			console.error(error)
+		})
+	}
     render() {
+    	const PageDataList = this.state.APP_Data_Page.map((value, i) => {
+    		return <Link to={`/pages/${value.name}`} className="nav-link p-3 text-dark text-decoration-none"><i className="fas fa-user pr-3"></i> {value.name}</Link>
+		})
         return (
             <Fragment>
 			<div className="position-fixed col-2 sideright">
@@ -313,6 +337,7 @@ export class SideRight extends Component {
 			        <h6 className="p-3 text-dark">
 			            <i className="fas fa-user pr-3"></i> My Pages
 			        </h6>
+			        {PageDataList}
 			        <a href="" className="nav-link p-3 text-dark text-decoration-none">
 			            <i className="fas fa-user pr-3"></i> Pages 1
 			        </a>
@@ -349,7 +374,6 @@ export class SideRight extends Component {
 			        <a href="" className="nav-link p-3 text-dark text-decoration-none">
 			            <i className="fas fa-user pr-3"></i> Pages 1
 			        </a>
-
 			        <a href="" className="nav-link p-3 text-dark text-decoration-none">
 			            <i className="fas fa-user pr-3"></i> Pages 1
 			        </a>
