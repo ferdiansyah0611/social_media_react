@@ -19,7 +19,7 @@ class PostDataController extends Controller
      */
     public function index()
     {
-        return response()->json(User::find(request()->user()->id)->withPostData()->paginate(25), 200);
+        return response()->json(User::find(request()->user()->id)->withPostData()->paginate(1), 200);
     }
 
     /**

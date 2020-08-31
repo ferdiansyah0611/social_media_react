@@ -77,7 +77,7 @@ class PostCommentController extends Controller
      */
     public function show($soPostComment)
     {
-        return response()->json(SoPostComment::where('id', $soPostComment)->get(), 200);
+        return response()->json(SoPostComment::where('id', $soPostComment)->paginate(), 200);
     }
 
     /**
