@@ -8,6 +8,7 @@ window._ = require('lodash');
 
 try {
     window.Popper = require('popper.js').default;
+    window.Swal = require('sweetalert2');
     require('bootstrap');
 } catch (e) {}
 

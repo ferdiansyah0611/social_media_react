@@ -1,57 +1,114 @@
 import React from 'react'
 import axios from 'axios'
+import Modal from 'bootstrap/js/dist/modal'
 import Mystate from '../components/State'
-
+import Card from '../components/post/Card'
 import {NavBar, SideRight, SideLeft} from './Template'
+
+let ModalStory = ''
 
 class Home extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			APP_Data_Story: [],
+			APP_Data_Story: [
+				{image: 'Screenshot (110).png'},
+				{image: 'Screenshot (110).png'},
+				{image: 'Screenshot (110).png'},
+				{image: 'Screenshot (110).png'},
+				{image: 'Screenshot (110).png'},
+				{image: 'Screenshot (110).png'}
+			],
 			APP_Data_Post: [],
+
 			APP_PostUpload_description: '',
 			APP_PostUpload_image: '',
 			APP_PostUpload_video: '',
 			APP_PostUpload_privacy: '',
-			APP_ModalPost_like: [],
-			APP_ModalPost_comment: [],
+
+			APP_DataPost_Comment_comment: '',
+			APP_DataPost_Comment_image: '',
+			APP_DataPost_Comment_video: '',
+
+			APP_Image_Story: '',
 
 			LatestPaginate_Story: '',
+			DefaultPage: 1
 		}
-		this.POST_POSTED = this.POST_POSTED.bind(this)
 		this.inputChange = this.inputChange.bind(this)
-		this.ClickModalPostLike = this.ClickModalPostLike.bind(this)
-		this.ClickModalPostComment = this.ClickModalPostComment.bind(this)
+		this.inputFileChange = this.inputFileChange.bind(this)
+		this.CreatePostData = this.CreatePostData.bind(this)
+		
+		this.LikePost = this.LikePost.bind(this)
+		this.ClickStory = this.ClickStory.bind(this)
 	}
 	componentDidMount() {
 		document.title = 'Home';
-		this.GET_POSTED();
+		this.GET_STORY();
+		ModalStory = new Modal(document.getElementById('modal-story'), {keyboard: false})
+		/*alert('Latest Scroll :' + window.pageYOffset)
+		alert('Max scroll :' + document.body.scrollHeight)*/
+		window.addEventListener('scroll', e => {
+			console.log(e)
+		})
 	}
 	inputChange(event) {
         this.setState({[event.target.name]: event.target.value});
     }
-	async POST_POSTED(event, $url = '/api/post-data', $method = 'post') {
+    inputFileChange(event) {
+        this.setState({[event.target.name]: event.target.files});
+    }
+    /*
+	** Creating data post to database
+    */
+	async CreatePostData(event, $url = '/api/post-data', $method = 'post') {
 		event.preventDefault()
-		let Form = new FormData()
-		Form.append('description', this.state.APP_PostUpload_description)
-		Form.append('image', this.state.APP_PostUpload_image)
-		Form.append('video', this.state.APP_PostUpload_video)
-		Form.append('privacy', this.state.APP_PostUpload_privacy)
-		await axios({
-			url: $url,
-			method: $method,
-			headers : {
-                'Authorization' : Mystate.token
-            },
-            data: Form
-		}).then(value => {
-			console.log(value)
-		}).catch(error => {
-			console.error(error)
-		})
+		Swal.fire({
+            title: 'Are you sure ?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, posted now!'
+        })
+        .then((result) => {
+		    if (result.value) {
+				let Form = new FormData()
+				Form.append('description', this.state.APP_PostUpload_description)
+				for(var i = 0; i < this.state.APP_PostUpload_image.length; i++) {
+					Form.append(`image[${i}]`, this.state.APP_PostUpload_image[i])
+				}
+				for(var i = 0; i < this.state.APP_PostUpload_video.length; i++) {
+					Form.append(`video[${i}]`, this.state.APP_PostUpload_video[i])
+				}
+				Form.append('privacy', this.state.APP_PostUpload_privacy)
+				const PUSH = async () => {
+					await axios({
+						url: $url,
+						method: $method,
+						headers : {
+			                'Authorization' : Mystate.token
+			            },
+			            data: Form
+					}).then(value => {
+						console.log(value)
+				        Swal.fire(
+				            'Success!',
+				            value.message,
+				            'success'
+				        )
+					}).catch(error => {
+						console.error(error)
+					})
+				}
+				PUSH()
+		    }
+        })
 	}
-	async GET_POSTED($url = '/api/post-data?page=1', $method = 'get') {
+	/*
+	** Getter data story
+	*/
+	async GET_STORY($url = '/api/story-data?page=' + this.state.DefaultPage, $method = 'get') {
 		await axios({
 			url: $url,
 			method: $method,
@@ -61,13 +118,16 @@ class Home extends React.Component {
 		}).then(value => {
 			let DataEach = value.data.data;
 			this.setState(state => {
-				return{ APP_Data_Post: DataEach }
+				return{ APP_Data_Story: DataEach }
 			})
 		}).catch(error => {
 			console.error(error)
 		})
 	}
-	async ClickModalPostLike(event, $url = '/api/page-post-like?page=1', $method = 'get') {
+	/*
+	** Getter data post append to home pages
+	*/
+	async GET_POSTED($url = '/api/post-data?page=' + this.state.DefaultPage, $method = 'get') {
 		await axios({
 			url: $url,
 			method: $method,
@@ -77,14 +137,16 @@ class Home extends React.Component {
 		}).then(value => {
 			let DataEach = value.data.data;
 			this.setState(state => {
-				return{ APP_ModalPost_like: DataEach }
+				return{ APP_Data_Post: DataEach, DefaultPage: this.state.DefaultPage + 1 }
 			})
-			console.log(DataEach)
 		}).catch(error => {
 			console.error(error)
 		})
 	}
-	async ClickModalPostComment(event, $url = '/api/page-post-comment', $method = 'get') {
+	/*
+	** Getter data post append to home pages if clicked
+	*/
+	async GET_POSTED_CLICK(event, $url = '/api/post-data?page=' + this.state.DefaultPage, $method = 'get') {
 		await axios({
 			url: $url,
 			method: $method,
@@ -94,15 +156,56 @@ class Home extends React.Component {
 		}).then(value => {
 			let DataEach = value.data.data;
 			this.setState(state => {
-				return{ APP_ModalPost_comment: DataEach }
+				return{
+					APP_Data_Post: this.state.APP_Data_Post.concat(DataEach),
+					DefaultPage: this.state.DefaultPage + 1 }
 			})
-			console.log(DataEach)
 		}).catch(error => {
 			console.error(error)
 		})
+	}
+	/**
+	 * Event click like post
+	 */
+	async LikePost(event, $method = 'post') {
+		let $data = event.target.dataset, $url = '/api/post-like', $like = '';
+		if($data.like == true) {
+			$like = 0;
+		}
+		if($data.like == false) {
+			$like = 1;
+		}
+		await axios({
+			url: $url,
+			method: $method,
+			headers : {
+				'Authorization' : Mystate.token
+			},
+			data: {
+				sc_post_data_id: $data,
+				like: $like
+			}
+		}).then(value => {
+			let DataEach = value.message;
+		}).catch(error => {
+			console.error(error)
+		})
+	}
+	/*
+	** Event click story
+	*/
+	async ClickStory(event) {
+		let e = event.target.src
+		this.setState(state => {
+			return {APP_Image_Story: e}
+		})
+		ModalStory.show()
 	}
 	render() {
-		const Modal = {
+		const MODAL = {
+			/*
+			** Modal Story View
+			*/
 			StoryView: () => {
 				return (
 					<div className="modal fade" id="modal-story" tabIndex="-1" aria-labelledby="modal-story-Label" aria-hidden="true">
@@ -117,7 +220,7 @@ class Home extends React.Component {
 				                <div className="modal-body">
 				                    <div className="row">
 				                        <div className="col-12 pb-2">
-				                            <img src="./media/kelly-repreza-vdsDBby6Tn4-unsplash.jpg" alt="example" className="img-fluid" />
+				                            <img src={this.state.APP_Image_Story} alt={this.state.APP_Image_Story} className="img-fluid" />
 				                        </div>
 				                        <div className="col-12">
 				                            <div className="row">
@@ -139,335 +242,8 @@ class Home extends React.Component {
 				        </div>
 		    		</div>
 				)
-			},
-			LikePostView: () => {
-				return (
-		    		<div className="modal fade" id="modal-like-post" tabIndex="-1" aria-labelledby="modal-like-post-Label" aria-hidden="true">
-				        <div className="modal-dialog">
-				            <div className="modal-content">
-				                <div className="modal-header">
-				                    <h5 className="modal-title" id="modal-like-post-Label">1000 like</h5>
-				                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-				                        <span aria-hidden="true">&times;</span>
-				                    </button>
-				                </div>
-				                <div className="modal-body">
-				                    <div className="row mb-4">
-				                        <div className="col">
-				                            <ul className="list-unstyled">
-				                                <li className="list-like-post mt-1">
-				                                    <div className="row">
-				                                        <div className="col-2">
-				                                            <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="example" className="img-fluid rounded-circle" style={{maxHeight: '60px'}} />
-				                                        </div>
-				                                        <div className="col-10 p-0">
-				                                            <p className="mt-3">
-				                                                <a href="/ferdiansyah" className="text-decoration-none text-dark">Ferdiansyah</a>
-				                                            </p>
-				                                        </div>
-				                                    </div>
-				                                </li>
-				                            </ul>
-				                        </div>
-				                    </div>
-				                </div>
-				            </div>
-				        </div>
-	    			</div>
-				)
-			},
-			CommentPostView: () => {
-				return (
-				    <div className="modal fade" id="modal-comment-post" tabIndex="-1" aria-labelledby="modal-comment-post-Label" aria-hidden="true">
-				        <div className="modal-dialog modal-lg modal-dialog-centered">
-				            <div className="modal-content">
-				                <div className="modal-header">
-				                    <h5 className="modal-title" id="modal-comment-post-Label">View</h5>
-				                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-				                        <span aria-hidden="true">&times;</span>
-				                    </button>
-				                </div>
-				                <div className="modal-body">
-				                    <div className="row">
-				                        <div className="col-12 col-sm-12 fs-15">
-				                            <div className="position-sticky default p-1 text-dark">
-				                                <p>Content in here</p>
-				                                <div className="col-12">
-				                                    <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="example" className="img-fluid" />
-				                                </div>
-				                            </div>
-				                        </div>
-				                        <div className="col-12 col-sm-12 p-1">
-				                            <div className="position-sticky p-3 default shadow-sm overflow-y-auto mh-750px">
-				                                <ul className="list-unstyled">
-				                                    <li className="mb-2">
-				                                        <div className="row">
-				                                            <div className="col-2">
-				                                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="example" className="rounded-circle img-fluid" />
-				                                            </div>
-				                                            <div className="col-10">
-				                                                <p className="h5 text-dark">Ferdiansyah</p>
-				                                                <p className="mb-2 text-dark">this comment</p>
-				                                                <p className="mb-1 fs-12 text-dark">
-				                                                    At 18:00 11/08/2020
-				                                                </p>
-				                                                <p>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-thumbs-up"></i> 2
-				                                                    </button>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-comment"></i> 2
-				                                                    </button>
-				                                                </p>
-				                                            </div>
-				                                        </div>
-				                                    </li>
-				                                    <li className="mb-2">
-				                                        <div className="row">
-				                                            <div className="col-2">
-				                                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="example" className="rounded-circle img-fluid" />
-				                                            </div>
-				                                            <div className="col-10">
-				                                                <p className="h5 text-dark">Ferdiansyah</p>
-				                                                <p className="mb-2 text-dark">this comment</p>
-				                                                <p className="mb-1 fs-12 text-dark">
-				                                                    At 18:00 11/08/2020
-				                                                </p>
-				                                                <p>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-thumbs-up"></i> 2
-				                                                    </button>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-comment"></i> 2
-				                                                    </button>
-				                                                </p>
-				                                            </div>
-				                                        </div>
-				                                    </li>
-				                                    <li className="mb-2">
-				                                        <div className="row">
-				                                            <div className="col-2">
-				                                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="example" className="rounded-circle img-fluid" />
-				                                            </div>
-				                                            <div className="col-10">
-				                                                <p className="h5 text-dark">Ferdiansyah</p>
-				                                                <p className="mb-2 text-dark">this comment</p>
-				                                                <p className="mb-1 fs-12 text-dark">
-				                                                    At 18:00 11/08/2020
-				                                                </p>
-				                                                <p>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-thumbs-up"></i> 2
-				                                                    </button>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-comment"></i> 2
-				                                                    </button>
-				                                                </p>
-				                                            </div>
-				                                        </div>
-				                                    </li>
-				                                    <li className="mb-2">
-				                                        <div className="row">
-				                                            <div className="col-2">
-				                                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="example" className="rounded-circle img-fluid" />
-				                                            </div>
-				                                            <div className="col-10">
-				                                                <p className="h5 text-dark">Ferdiansyah</p>
-				                                                <p className="mb-2 text-dark">this comment</p>
-				                                                <p className="mb-1 fs-12 text-dark">
-				                                                    At 18:00 11/08/2020
-				                                                </p>
-				                                                <p>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-thumbs-up"></i> 2
-				                                                    </button>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-comment"></i> 2
-				                                                    </button>
-				                                                </p>
-				                                            </div>
-				                                        </div>
-				                                    </li>
-				                                    <li className="mb-2">
-				                                        <div className="row">
-				                                            <div className="col-2">
-				                                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="example" className="rounded-circle img-fluid" />
-				                                            </div>
-				                                            <div className="col-10">
-				                                                <p className="h5 text-dark">Ferdiansyah</p>
-				                                                <p className="mb-2 text-dark">this comment</p>
-				                                                <p className="mb-1 fs-12 text-dark">
-				                                                    At 18:00 11/08/2020
-				                                                </p>
-				                                                <p>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-thumbs-up"></i> 2
-				                                                    </button>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-comment"></i> 2
-				                                                    </button>
-				                                                </p>
-				                                            </div>
-				                                        </div>
-				                                    </li>
-				                                    <li className="mb-2">
-				                                        <div className="row">
-				                                            <div className="col-2">
-				                                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="example" className="rounded-circle img-fluid" />
-				                                            </div>
-				                                            <div className="col-10">
-				                                                <p className="h5 text-dark">Ferdiansyah</p>
-				                                                <p className="mb-2 text-dark">this comment</p>
-				                                                <p className="mb-1 fs-12 text-dark">
-				                                                    At 18:00 11/08/2020
-				                                                </p>
-				                                                <p>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-thumbs-up"></i> 2
-				                                                    </button>
-				                                                    <button className="btn btn-light border-0">
-				                                                        <i className="far fa-comment"></i> 2
-				                                                    </button>
-				                                                </p>
-				                                            </div>
-				                                        </div>
-				                                    </li>
-				                                </ul>
-				                            </div>
-				                        </div>
-				                    </div>
-				                </div>
-				                <div className="modal-footer border-0">
-				                    <div className="row">
-				                        <div className="col-12 col-sm-10">
-				                            <form>
-				                                <textarea className="form-control mb-1 mh-300px" rows="3" placeholder="Type here to comment"></textarea>
-				                            </form>
-				                        </div>
-				                        <div className="col-12 col-sm-2">
-				                            <button className="btn btn-primary w-100 h-100">
-				                                <span className="material-icons fs-30">send</span>
-				                            </button>
-				                        </div>
-				                    </div>
-				                </div>
-				            </div>
-				        </div>
-				    </div>
-				)
-			},
-			SharePostView: () => {
-				return (
-				    <div className="modal fade" id="modal-share-post" tabIndex="-1" aria-labelledby="modal-share-post-Label" aria-hidden="true">
-				        <div className="modal-dialog modal-dialog-centered">
-				            <div className="modal-content">
-				                <div className="modal-header">
-				                    <h5 className="modal-title" id="modal-share-post-Label">Share to</h5>
-				                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-				                        <span aria-hidden="true">&times;</span>
-				                    </button>
-				                </div>
-				                <div className="modal-body">
-				                    <div className="row text-center fs-30">
-				                        <div className="col">
-				                            <a href="/social-media">
-				                                <i className="fab fa-facebook"></i>
-				                            </a>
-				                        </div>
-				                        <div className="col">
-				                            <a href="/social-media">
-				                                <i className="fab fa-twitter"></i>
-				                            </a>
-				                        </div>
-				                        <div className="col">
-				                            <a href="/social-media">
-				                                <i className="fab fa-instagram"></i>
-				                            </a>
-				                        </div>
-				                        <div className="col">
-				                            <a href="/social-media">
-				                                <i className="fab fa-pinterest"></i>
-				                            </a>
-				                        </div>
-				                    </div>
-				                </div>
-				            </div>
-				        </div>
-				    </div>
-				)
 			}
 		};
-		const PostCard = this.state.APP_Data_Post.map((value, i) => {
-			return <div key={i} className="card bg-white mt-2 border-0 shadow-sm animate__animated animate__fadeInUp">
-			    <div className="card-body">
-			        <div className="row">
-			            <div className="col-2 text-md-center">
-			                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" className="rounded-circle avatar-post" alt="example" width="100%" />
-			            </div>
-			            <div className="col-5">
-			                <p className="text-truncate mb-0">
-			                    <a href="./ferdiansyah" className="text-decoration-none text-dark">Ferdiansyah</a>
-			                </p>
-			                <span className="p-0 text-truncate text-lowercase text-dark font-weight-light fs-13">{value.created_at}</span>
-			            </div>
-			            <div className="col-5">
-			                <div className="dropdown dropleft float-right">
-			                    <a className="btn btn-light rounded dropdown-toggle before-none" href="#" name="dropdownMenuLink3" id="dropdownMenuLink3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			                        <i className="fas fa-ellipsis-v"></i>
-			                    </a>
-			                    <div className="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="dropdownMenuLink3">
-			                        <a className="dropdown-item" href="#">
-			                            <span className="material-icons">save</span> 
-			                            <span className="position-absolute ml-1">Save link</span>
-			                        </a>
-			                        <a className="dropdown-item" href="#">
-			                            <span className="material-icons">remove_circle_outline</span>
-			                            <span className="position-absolute ml-1">Hide post</span>
-			                        </a>
-			                        <a className="dropdown-item" href="#">
-			                            <span className="material-icons">person_remove</span>
-			                            <span className="position-absolute ml-1">Unfollow</span>
-			                        </a>
-			                        <a className="dropdown-item" href="#">
-			                            <span className="material-icons">content_copy</span>
-			                            <span className="position-absolute ml-1">Copy link</span>
-			                        </a>
-			                        <a className="dropdown-item" href="#">
-			                            <span className="material-icons">report</span>
-			                            <span className="position-absolute ml-1">Report</span>
-			                        </a>
-			                    </div>
-			                </div>
-			            </div>
-			            <div className="col-12 mt-1 text-dark fs-15">
-			                {value.description}
-			                <div className="row">
-			                    <div className="col">
-			                        <img src="./media/kelly-repreza-vdsDBby6Tn4-unsplash.jpg" alt="example" className="img-fluid" />
-			                    </div>
-			                </div>
-			            </div>
-			        </div>
-			    </div>
-			    <div className="card-footer font-weight-light bg-transparent border-0">
-			        <button onClick={this.ClickModalPostLike} data-id={value.id} type="button" className="text-dark btn border-0" data-toggle="modal" data-target="#modal-like-post">1000 people like this post</button>
-			        <div className="row">
-			            <button onClick={this.LikePost} data-id={value.id} type="button" className="btn btn-outline-light text-dark border-0 col">
-			                <i className="far fa-thumbs-up pl-1"></i>
-			                1000
-			            </button>
-			            <button onClick={this.ClickModalPostComment} data-id={value.id} type="button" className="btn btn-outline-light text-dark border-0 col" data-toggle="modal" data-target="#modal-comment-post">
-			                <i className="far fa-comment pl-1"></i>
-			                10
-			            </button>
-			            <button type="button" className="btn btn-outline-light text-dark border-0 col" data-toggle="modal" data-target="#modal-share-post">
-			                <i className="far fa-share-square pl-1"></i>
-			                10
-			            </button>
-			        </div>
-			    </div>
-			</div>
-	    });
 		return (
 			<React.Fragment>
 			<NavBar/>
@@ -480,21 +256,35 @@ class Home extends React.Component {
 	                    <div className="card border-0 shadow-sm mt-2">
 	                        <div className="card-body">
 	                            <div className="story pb-2 bg-white">
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
-	                                <img src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" data-toggle="modal" data-target="#modal-story" />
+		                            {this.state.APP_Data_Story.map((val, key) => {
+		                            	if(val.image) {
+			                            	return (
+			                            		<img onClick={this.ClickStory} key={key} src={Mystate.pathImage + val.image} alt={val.image} className="col-3 float-left" />
+			                            	)
+		                            	}
+		                            	if(val.video) {
+			                            	return (
+			                            		<video onClick={this.ClickStory} key={key} className="col-3 float-left" controls>
+			                            			<source src={Mystate.pathVideo + val.video} type="video/mp4" />
+			                            		</video>
+			                            	)
+		                            	}
+		                            })}
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
 	                            </div>
 	                            <div className="next-story rounded-circle shadow-sm">
 	                                <span className="material-icons p-1">chevron_right</span>
@@ -502,7 +292,7 @@ class Home extends React.Component {
 	                            <div className="previous-story rounded-circle shadow-sm">
 	                                <span className="material-icons p-1">chevron_left</span>
 	                            </div>
-	                            <form onSubmit={this.POST_POSTED}>
+	                            <form onSubmit={this.CreatePostData}>
 	                                <div className="input-group mb-1">
 	                                    <select onChange={this.inputChange} name="APP_PostUpload_privacy" className="form-select form-select-sm" aria-label=".form-select-sm">
 	                                        <option>Choose privacy...</option>
@@ -513,14 +303,14 @@ class Home extends React.Component {
 	                                </div>
 	                                <textarea onChange={this.inputChange} name="APP_PostUpload_description" className="form-control mt-2" placeholder="What do you think now ?" rows="4"></textarea>
 	                                <div className="form-file form-file-sm mt-2">
-	                                    <input onChange={this.inputChange} name="APP_PostUpload_image" type="file" className="form-file-input" id="image_upload_post" accept=".jpg,.png,.jpeg" multiple/>
+	                                    <input onChange={this.inputFileChange} name="APP_PostUpload_image" type="file" className="form-file-input" id="image_upload_post" accept=".jpg,.png,.jpeg" multiple/>
 	                                    <label className="form-file-label" htmlFor="image_upload_post">
 	                                        <span className="form-file-text">Choose file image...</span>
 	                                        <span className="form-file-button">Browse</span>
 	                                    </label>
 	                                </div>
 	                                <div className="form-file form-file-sm mt-2">
-	                                    <input onChange={this.inputChange} name="APP_PostUpload_video" type="file" className="form-file-input" id="video_upload_post" accept=".mp4" multiple/>
+	                                    <input onChange={this.inputFileChange} name="APP_PostUpload_video" type="file" className="form-file-input" id="video_upload_post" accept=".mp4" multiple/>
 	                                    <label className="form-file-label" htmlFor="video_upload_post">
 	                                        <span className="form-file-text">Choose file video...</span>
 	                                        <span className="form-file-button">Browse</span>
@@ -531,10 +321,7 @@ class Home extends React.Component {
 	                            </form>
 	                        </div>
 	                    </div>
-	                    {PostCard}
-	                    <div className="col-12 text-center mt-2">
-	                        <button type="button" className="text-decoration-none text-dark font-weight-bold btn btn-light">Click to load 15 more data</button>
-	                    </div>
+						<Card url="/api/post-data" UrlLikeShow="/api/post-like" UrlLikePost="" UrlComment="/api/post-comment" UrlCommentUpload="/api/post-comment"/>
 	                    <footer className="card bg-white mt-2 border-0 shadow-sm animate__animated animate__fadeInUp">
 	                        <div className="card-body">
 	                            <div className="row">
@@ -542,7 +329,7 @@ class Home extends React.Component {
 	                                    <i className="far fa-copyright fs-20"></i>
 	                                    <span className="ml-2 font-weight-bold">Copyright reserved 2020</span>
 	                                </div>
-	                                <div className="col-12 col-sm-6 text-center text-sm-right">Design by 
+	                                <div className="col-12 col-sm-6 text-center text-sm-right">Development by 
 	                                    <a target="blank" href="https://github.com/ferdiansyah0611" className="font-weight-bold text-decoration-none ml-1">
 	                                        <span>Ferdiansyah</span>
 	                                    </a>
@@ -558,10 +345,7 @@ class Home extends React.Component {
 	                </div>
 	            </div>
         	</div>
-        	<Modal.StoryView/>
-        	<Modal.LikePostView/>
-        	<Modal.CommentPostView/>
-        	<Modal.SharePostView/>
+        	<MODAL.StoryView/>
 			</React.Fragment>
 		)
 	}
