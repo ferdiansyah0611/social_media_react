@@ -8,6 +8,7 @@ use Validator;
 use File;
 /*models*/
 use App\Models\Posted\SoPostData;
+use App\Models\User\SoUserFriend;
 use App\User;
 
 class PostDataController extends Controller
@@ -19,7 +20,7 @@ class PostDataController extends Controller
      */
     public function index()
     {
-        return response()->json(User::find(request()->user()->id)->withPostData()->paginate(1), 200);
+        return response()->json(User::find(request()->user()->id)->withPostData()->latest()->paginate(10), 200);
     }
 
     /**
@@ -171,5 +172,18 @@ class PostDataController extends Controller
                 File::delete(storage_path('app/public/asset/' . $video));
             }
         }
+    }
+    public function user($id)
+    {
+        return response()->json(SoPostData::where('user_id', $id)->latest()->get(), 200);
+    }
+    public function friends()
+    {
+        $friends = SoUserFriend::where('user_id', 1)->pluck('friends_user_id');
+        $data = null;
+        for ($i=0; $i < count($friends); $i++) {
+            $data[$i] = SoPostData::where('user_id', $friends[$i])->latest()->paginate(10);
+        }
+        return response()->json($data, 200);
     }
 }
