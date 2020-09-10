@@ -15,6 +15,9 @@ import Register from './auth/Register'
 import ForgetPassword from './auth/ForgetPassword'
 import VerifiedEmail from './auth/VerifiedEmail'
 import Home from './../page/Home'
+import Notification from './../page/Notification'
+import ViewProfile from './../page/user/View'
+import ViewPage from './../page/page/View'
 
 function PrivateRoute({ children, ...rest }) {
     return (
@@ -53,6 +56,11 @@ class Routing extends React.Component {
       			  	  	<PrivateRoute path="/home">
       			  	    	<Home />
       			  	  	</PrivateRoute>
+                        <PrivateRoute path="/profile/:id" component={ViewProfile}></PrivateRoute>
+                        <PrivateRoute path="/profile/:name" component={ViewPage}></PrivateRoute>
+                        <PrivateRoute path="/notification">
+                            <Notification />
+                        </PrivateRoute>
       			  	</Switch>
       			</div>
     		</Router>

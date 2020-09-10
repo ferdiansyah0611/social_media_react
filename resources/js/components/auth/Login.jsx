@@ -2,8 +2,8 @@ import React from 'react'
 import axios from 'axios'
 import Auth from '../Auth.js'
 
-class Login extends React.Component{
-    constructor(props){
+class Login extends React.Component {
+    constructor(props) {
         super(props);
         this.state = {
             email: '',
@@ -28,16 +28,21 @@ class Login extends React.Component{
             window.localStorage.setItem('token', result.data.success.token);
             window.localStorage.setItem('user', JSON.stringify(result.data.user));
             Auth.isAuthentication = true;
-            window.location.href = '/home';
+            return this.props.history.push('/home');
         }).catch(error => {
             console.error(error.message)
         })
     }
-    componentDidMount(){
+    componentDidMount() {
         document.title = 'Login to app social media'
         document.body.classList.add('bg-primary');
     }
-    render(){
+    componentWillMount() {
+        if(window.localStorage.getItem('user') && window.localStorage.getItem('token')) {
+            this.props.history.push('/home')
+        }
+    }
+    render() {
         return (
             <div className="container mt-5" >
                    <div className="col-md-6 offset-sm-0 offset-md-3">
