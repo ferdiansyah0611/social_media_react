@@ -88,4 +88,40 @@ class UserNotificationController extends Controller
         SoUserNotification::where('id', $soUserNotification)->delete();
         return response()->json(['message' => 'Successfuly delete data'], 200);
     }
+
+    /**
+     * Remove the specified user from storage scale all data.
+     *
+     * @param  \App\Models\User\SoUserNotification  $soUserNotification
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteall()
+    {
+        SoUserNotification::where('user_id', Auth()->user()->id)->delete();
+        return response()->json(['message' => 'Your notification has been deleted'], 200);
+    }
+
+    /**
+     * Read the specified user from storage scale all data.
+     *
+     * @param  \App\Models\User\SoUserNotification  $soUserNotification
+     * @return \Illuminate\Http\Response
+     */
+    public function readall()
+    {
+        SoUserNotification::where('user_id', Auth()->user()->id)->update(['status' => 'read']);
+        return response()->json(['message' => 'Your notification has been read'], 200);
+    }
+
+    /**
+     * Archive the specified user from storage scale all data.
+     *
+     * @param  \App\Models\User\SoUserNotification  $soUserNotification
+     * @return \Illuminate\Http\Response
+     */
+    public function archiveall()
+    {
+        SoUserNotification::where('user_id', Auth()->user()->id)->update(['status' => 'archive']);
+        return response()->json(['message' => 'Your notification has been archived'], 200);
+    }
 }
