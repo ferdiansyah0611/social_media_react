@@ -32,7 +32,7 @@ Route::group(['middleware' => 'auth:api'], function(){
 		Route::apiResource('page-follow', 'PageFollowController');
 		Route::apiResource('page-post-comment', 'PagePostCommentController');
 		Route::apiResource('page-post-data', 'PagePostDataController');
-		Route::apiResource('page-post-ike', 'PagePostLikeController');
+		Route::apiResource('page-post-like', 'PagePostLikeController');
 		Route::apiResource('page-post-sub-comment', 'PagePostSubCommentController');
 	});
 	Route::group(['namespace' => 'Api\Posted'], function(){
@@ -41,6 +41,8 @@ Route::group(['middleware' => 'auth:api'], function(){
 		Route::apiResource('post-data', 'PostDataController');
 		Route::apiResource('post-like', 'PostLikeController');
 		Route::apiResource('post-sub-comment', 'PostSubCommentController');
+		
+		Route::get('users/post-data/{id}', 'PostDataController@user');
 	});
 	Route::group(['namespace' => 'Api\Profile'], function(){
 		Route::apiResource('profile-avatar', 'ProfileAvatarController');
@@ -60,5 +62,11 @@ Route::group(['middleware' => 'auth:api'], function(){
 		Route::apiResource('user-message', 'UserMessageController');
 		Route::apiResource('user-notification', 'UserNotificationController');
 		Route::apiResource('user-report', 'UserReportController');
+
+		Route::get('user-notification/all/delete', 'UserNotificationController@deleteall');
+		Route::get('user-notification/all/read', 'UserNotificationController@readall');
+		Route::get('user-notification/all/archive', 'UserNotificationController@archiveall');
 	});
+	Route::apiResource('link', 'LinkController');
 });
+		Route::get('friends/post-data', 'Api\Posted\PostDataController@friends');
