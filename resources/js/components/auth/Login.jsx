@@ -37,7 +37,7 @@ class Login extends React.Component {
         document.title = 'Login to app social media'
         document.body.classList.add('bg-primary');
     }
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         if(window.localStorage.getItem('user') && window.localStorage.getItem('token')) {
             this.props.history.push('/home')
         }

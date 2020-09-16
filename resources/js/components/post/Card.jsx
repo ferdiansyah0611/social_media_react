@@ -4,7 +4,7 @@ import Modal from 'bootstrap/js/dist/modal'
 import Mystate from '../State'
 import {SharePostModal, LikePostModal, CommentPostModal} from './Modal'
 
-let ModalCommentPost = '', ModalLikePost = '', ModalSharePost = ''
+let ModalCommentPost = '', ModalLikePost = '', ModalSharePost = '', Load = true
 
 class Card extends React.Component {
 	constructor(props) {
@@ -21,6 +21,8 @@ class Card extends React.Component {
 			APP_ModalPost_like: [],
 			APP_ModalPost_comment: []
 		}
+		this.HideLink = this.HideLink.bind(this)
+		this.SaveLink = this.SaveLink.bind(this)
 		this.ReportUser = this.ReportUser.bind(this)
 		this.BlockingUser = this.BlockingUser.bind(this)
 		this.ClickModalPostLike = this.ClickModalPostLike.bind(this)
@@ -33,6 +35,63 @@ class Card extends React.Component {
 		ModalCommentPost = new Modal(document.getElementById('modal-comment-post'), {keyboard: false})
 		ModalLikePost = new Modal(document.getElementById('modal-like-post'), {keyboard: false})
 		ModalSharePost = new Modal(document.getElementById('modal-share-post'), {keyboard: false})
+	}
+	componentWillUnmount() {
+		Load = true;
+	}
+	HideLink(event) {
+		event.preventDefault();
+		event.persist();
+		var app = this.state.Data;
+		var da = app.map((value, key) => value);
+		/*var test = da.find((data, key) => {
+			if(key == event.target.dataset.key){
+				console.log(key)
+				this.setState(state => {
+					return {
+						Data: da.splice(event.target.dataset.key + 1, da.length - event.target.dataset.key)
+					}
+				})
+				return true;
+			}
+		});*/
+		let custom = da.filter((data, key) => {
+			console.log(data)
+			if(da.length == 1){
+				this.loadedPost();
+			}
+			if(data.id == event.target.dataset.id){
+				return false;
+			}else{
+				return data;
+			}
+		})
+		console.log(event.target.dataset.id)
+		console.log(custom)
+		this.setState(state => {
+			return {
+				Data: custom
+			}
+		})
+		
+	}
+	async SaveLink(event) {
+		event.preventDefault();
+		event.persist();
+		let Form = new FormData();
+		Form.append('link', window.location.origin + '/profile/' + user_id);
+		await axios({
+			url: '/api/link',
+			method: 'post',
+			headers: {
+			    'Authorization' : Mystate.token
+			},
+			data: Form
+		}).then(value => {
+			Swal.fire('Saved!', value.message, 'success');
+		}).catch(error => {
+			console.error(error)
+		})
 	}
 	async ReportUser(event) {
 		event.preventDefault();
@@ -112,8 +171,9 @@ class Card extends React.Component {
             }
 		}).then(value => {
 			let DataEach = value.data.data;
+			Load = false;
 			this.setState(state => {
-				return{ Data: DataEach, DefaultPage: this.state.DefaultPage + 1 }
+				return{ Data: DataEach.reverse(), DefaultPage: this.state.DefaultPage + 1 }
 			})
 		})
 	}
@@ -186,6 +246,9 @@ class Card extends React.Component {
 	** Getter data post append to home pages if clicked
 	*/
 	async Get_Posted_More(event, $url = `${this.state.url}?page=` + this.state.DefaultPage, $method = 'get') {
+		event.persist();
+		event.target.disabled = true;
+		let e = event;
 		await axios({
 			url: $url,
 			method: $method,
@@ -194,6 +257,7 @@ class Card extends React.Component {
             }
 		}).then(value => {
 			let DataEach = value.data.data;
+			event.target.disabled = false;
 			this.setState(state => {
 				return{
 					Data: this.state.Data.concat(DataEach),
@@ -232,13 +296,13 @@ class Card extends React.Component {
 			                        <i className="fas fa-ellipsis-v"></i>
 			                    </a>
 			                    <div className="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="dropdownMenuLink3">
-			                        <a className="dropdown-item" href="#" data-id={value.id}>
+			                        <a onClick={this.SaveLink} className="dropdown-item" data-user_id={value.user_id} style={{cursor: 'pointer'}}>
 			                            <span className="material-icons">save</span>
 			                            <span className="position-absolute ml-1">Save link</span>
 			                        </a>
-			                        <a className="dropdown-item" href="#" data-id={value.id}>
-			                            <span className="material-icons">remove_circle_outline</span>
-			                            <span className="position-absolute ml-1">Hide post</span>
+			                        <a onClick={this.HideLink} className="dropdown-item" data-id={value.id} style={{cursor: 'pointer'}}>
+			                            <span data-id={value.id} className="material-icons">remove_circle_outline</span>
+			                            <span data-id={value.id} className="position-absolute ml-1">Hide post</span>
 			                        </a>
 			                        <a className="dropdown-item" href="#" data-id={value.id}>
 			                            <span className="material-icons">person_remove</span>
@@ -290,9 +354,21 @@ class Card extends React.Component {
 		})
 		return (
 			<React.Fragment>
+			{Load ? (
+				<div className="card border-0 shadow-sm mt-2">
+					<div className="card-body">
+						<div className="d-flex justify-content-center">
+							<div className="spinner-border text-primary" role="status">
+    							<span className="sr-only">Loading...</span>
+  							</div>
+						</div>
+					</div>
+				</div>
+				): false
+			}
 				{PostCard}
 				<div className="col-12 text-center mt-2">
-	                <button onClick={this.Get_Posted_More} type="button" className="text-decoration-none text-dark font-weight-bold btn btn-light">Click to load 25 more data</button>
+	                <button onClick={this.Get_Posted_More} type="button" className="text-decoration-none text-dark font-weight-bold btn btn-light" disabled={false}>Click to load 25 more data</button>
 	            </div>
 				<SharePostModal/>
 				<LikePostModal apps={this.state.APP_ModalPost_like}/>
