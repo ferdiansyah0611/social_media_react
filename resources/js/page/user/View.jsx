@@ -1,6 +1,7 @@
 import React from 'react'
 import Modal from 'bootstrap/js/dist/modal'
 import Mystate from '../../components/State'
+import lava from '../APP'
 import {SharePostModal, LikePostModal, CommentPostModal} from '../../components/post/Modal'
 import {NavBar} from '../Template'
 import Card from '../../components/post/Card'

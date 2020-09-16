@@ -4,7 +4,7 @@ import Mystate from '../../components/State'
 import {SharePostModal, LikePostModal, CommentPostModal} from '../../components/post/Modal'
 import {NavBar} from '../Template'
 import Card from '../../components/post/Card'
-import './View.css'
+import '../user/View.css'
 
 let ModalViewPhoto = ''
 
@@ -80,7 +80,7 @@ class View extends React.Component {
 					</p>
 					<p className="mb-0 mt-3 text-truncate">
 						<i className="fab fa-facebook font-weight-bold mr-2 text-primary"></i>
-						<span className="fs-14">Ferdi Ferdiansyah</span>
+						<span className="fs-14">{value.name}</span>
 					</p>
 					<p className="mb-0 mt-3 text-truncate">
 						<i className="fab fa-twitter font-weight-bold mr-2 text-primary"></i>

@@ -1,51 +1,56 @@
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
-    		background-color: var(--bs-light)!important;
-    		border-color: #fff!important;
-    	}
-    	.name-cover{
-  			margin: 2% 36%;z-index: 9;
-		}
-		.name-cover img{
-			height: 160px;
-    		max-height: 160px;
-		}
-		.cover{
-  			max-height: 300px;
-		}
-		.latest-photo.scroll{
-  			max-height: 240px;
-		}
-		.list-like-post{
-    		width: 100%;
-		}
-		.mh-300px{
-			max-height: 300px;
-		}
-		.mh-750px{
-			max-height: 750px;
-		}
-  		/*xs*/
-  		@media screen and (min-width: 0px) and (max-width: 576px){
-    		#tab_view{
-      			font-size: 13px;
-    		}
-    		#friend-tab{
-      			visibility: hidden;
-    		}
-    		.name-cover{
-      			margin-left: 28%;
-      			font-size: 14px;
-    		}
-  		}
-  		/*sm*/
-  		@media screen and (min-width: 576px) and (max-width: 768px){
-    		.name-cover{
-      			margin-left: 28%;
-      			font-size: 14px;
-    		}
-  		}
-  		@media screen and (min-width: 1200px){
-  			.avatar-post{
-		  		width: 80px;
-			}
-  		}
+	background-color: var(--bs-light)!important;
+	border-color: #fff!important;
+}
+.name-cover{
+	margin: 2% 36%;z-index: 9;
+}
+.name-cover img{
+	height: 160px;
+	max-height: 160px;
+}
+.cover{
+	max-height: 300px;
+}
+.latest-photo.scroll{
+	max-height: 240px;
+}
+.list-like-post{
+	width: 100%;
+}
+.mh-300px{
+	max-height: 300px;
+}
+.mh-750px{
+	max-height: 750px;
+}
+#example{
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+/*xs*/
+@media screen and (min-width: 0px) and (max-width: 576px){
+	#tab_view{
+			font-size: 13px;
+	}
+	#friend-tab{
+			visibility: hidden;
+	}
+	.name-cover{
+			margin-left: 28%;
+			font-size: 14px;
+	}
+}
+/*sm*/
+@media screen and (min-width: 576px) and (max-width: 768px){
+	.name-cover{
+			margin-left: 28%;
+			font-size: 14px;
+	}
+}
+@media screen and (min-width: 1200px){
+	.avatar-post{
+		width: 80px;
+  }
+}
