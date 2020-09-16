@@ -1,0 +1,82 @@
+body{
+    		overflow-x: hidden;
+    	}
+    	.nav.nav-tabs > li > a.active{
+    		border: 0;
+    		background-color: #00000014;
+    	}
+    	.card.chat{
+    		height: 35em;
+    		max-height: 35em;
+    	}
+    	.maxH-33em{
+    		max-height: 33em;
+    	}
+    	.maxH-28em{
+    		max-height: 25em;
+    	}
+    	.maxH-35em{
+    		max-height: 35em;
+    	}
+    	.ml-min-160px{
+    		margin-left: -160px;
+    	}
+    	.right-17{
+    		right: 17px;
+    	}
+    	.top-17{
+    		top: 17px
+    	}
+    	.top-4n5-em{
+    		margin-top: 4.5em;
+    	}
+    	.pd-10{
+    		padding-top: 10px;
+    	}
+    	.mh-94px{
+    		max-height: 94px;
+    	}
+    	.bg-gray{
+    		background-color: var(--bs-gray);
+    	}
+    	#clickMenuTab{
+    		z-index: 9999;
+    		border-bottom-right-radius: 90%;
+    		border-top-right-radius: 90%;
+    		top: 45%;
+    		left: 0;
+    		transition: 1s all;
+    	}
+    	#closeMenuTab{
+    		margin-left: -100%;
+    		z-index: 9999;
+    		border-bottom-right-radius: 90%;
+    		border-top-right-radius: 90%;
+    		top: 45%;
+    		left: 0;
+    		transition: 1s all;
+    	}
+    	@media screen and (min-width: 0px) and (max-width: 576px){
+    		input[name="search"]{
+    			font-size: 12px;
+    		}
+    		#tabChat{
+    			font-size: 12px;
+    			margin-left: -100%;
+    			position: fixed;
+    			transition: 0.1s all ease-in;
+    			visibility: hidden;
+    		}
+    		.chat-message > .chat-me > p{
+    			font-size: 11px !important;
+    		}
+    		.chat-message > .chat-friends > p{
+    			font-size: 11px !important;
+    		}
+    		.profile-chat{
+    			z-index: 999;
+    			top: 0;
+    			left: 0;
+    			width: 100%;
+    		}
+    	}
