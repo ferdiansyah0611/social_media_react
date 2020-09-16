@@ -12,6 +12,7 @@
 </head>
 <body>
     <div id="app"></div>
+    <div id="load"></div>
     <script type="text/javascript" src="{{asset('vendor/lavosted/lavosted.min.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rellax/1.12.1/rellax.min.js"></script>
 </body>
