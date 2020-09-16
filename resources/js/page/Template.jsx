@@ -5,6 +5,8 @@ import './Home.css'
 import lava from './APP'
 import Mystate from '../components/State'
 
+let Load = true;
+
 export class NavBar extends Component {
     constructor(props) {
         super(props);
@@ -247,7 +249,7 @@ export class NavBar extends Component {
 			                    </ul>
 			                </div>
 			            </div>
-			            <Link to="/chat" className="nav-link d-none d-xl-inline-block pb-0 text-center">
+			            <Link to="/chatting" className="nav-link d-none d-xl-inline-block pb-0 text-center">
 			                <span className="material-icons text-primary">chat</span>
 			            </Link>
 			            <Link to="/notification" className="nav-link d-none d-xl-inline-block pb-0 text-center">
@@ -273,7 +275,7 @@ export class NavBar extends Component {
 			        <Link to="/home" className="nav-link fs-20 col active">
 			            <i className="far fa-newspaper text-primary"></i>
 			        </Link>
-			        <Link to="/chat" className="nav-link fs-20 col">
+			        <Link to="/chatting" className="nav-link fs-20 col">
 			            <i className="far fa-comment-alt text-primary"></i>
 			        </Link>
 			        <Link to="/notification" className="nav-link fs-20 col">
@@ -348,6 +350,9 @@ export class SideRight extends Component {
     		query: '.position-sticky.scroll'
 		});
     }
+    componentWillUnmount() {
+		Load = true;
+	}
     async GET_PAGE($method = 'get') {
 		await axios({
 			url: this.state.PageUrlLatest,
@@ -357,6 +362,7 @@ export class SideRight extends Component {
             }
 		}).then(value => {
 			let DataEach = value.data.data, Base = value.data;
+			Load = false;
 			this.setState(state => {
 				return{ APP_Data_Page: DataEach, PageUrlLatest: Base.next_page_url }
 			})
@@ -391,8 +397,13 @@ export class SideRight extends Component {
 			        <h6 className="p-3 text-dark">
 			            <i className="fas fa-user pr-3"></i> My Pages
 			        </h6>
+		            {Load ? (<div className="d-flex justify-content-center">
+						<div className="spinner-border text-primary" role="status">
+		    				<span className="sr-only">Loading...</span>
+		  				</div>
+					</div>): false}
 			        {PageDataList}
-			        <button onClick={this.NextPage} className="btn btn-light w-100 text-center">Show more page</button>
+			        {Load ? false: (<button onClick={this.NextPage} className="btn btn-light w-100 text-center">Show more page</button>)}
 			    </div>
 			</div>
 			<div className="position-fixed col-1 sideright-el-2 right-0">

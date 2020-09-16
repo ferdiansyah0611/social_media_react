@@ -1,11 +1,10 @@
 import React from 'react'
-import axios from 'axios'
 import Modal from 'bootstrap/js/dist/modal'
 import Mystate from '../components/State'
 import Card from '../components/post/Card'
 import {NavBar, SideRight, SideLeft} from './Template'
 
-let ModalStory = ''
+let IDModalStory = '', ModalStory = '', LoadStory = true;
 
 class Home extends React.Component {
 	constructor(props) {
@@ -44,13 +43,14 @@ class Home extends React.Component {
 	}
 	componentDidMount() {
 		document.title = 'Home';
-		this.GET_STORY();
-		ModalStory = new Modal(document.getElementById('modal-story'), {keyboard: false})
+		this.GetStory();
+		IDModalStory = document.getElementById('modal-story');
+		ModalStory = new Modal(IDModalStory, {keyboard: false})
 		/*alert('Latest Scroll :' + window.pageYOffset)
 		alert('Max scroll :' + document.body.scrollHeight)*/
-		window.addEventListener('scroll', e => {
+		/*window.addEventListener('scroll', e => {
 			console.log(e)
-		})
+		})*/
 	}
 	inputChange(event) {
         this.setState({[event.target.name]: event.target.value});
@@ -62,7 +62,9 @@ class Home extends React.Component {
 	** Creating data post to database
     */
 	async CreatePostData(event, $url = '/api/post-data', $method = 'post') {
-		event.preventDefault()
+		event.preventDefault();
+		event.persist();
+		event.target[4].disabled = true;
 		Swal.fire({
             title: 'Are you sure ?',
             icon: 'warning',
@@ -92,23 +94,23 @@ class Home extends React.Component {
 			            data: Form
 					}).then(value => {
 						console.log(value)
-				        Swal.fire(
-				            'Success!',
-				            value.message,
-				            'success'
-				        )
+						event.target[4].disabled = false;
+				        Swal.fire('Success!', value.message, 'success')
 					}).catch(error => {
 						console.error(error)
+						event.target[4].disabled = false;
 					})
 				}
 				PUSH()
+		    }else{
+		    	event.target[4].disabled = false;
 		    }
         })
 	}
 	/*
 	** Getter data story
 	*/
-	async GET_STORY($url = '/api/story-data?page=' + this.state.DefaultPage, $method = 'get') {
+	async GetStory($url = '/api/story-data?page=' + this.state.DefaultPage, $method = 'get') {
 		await axios({
 			url: $url,
 			method: $method,
@@ -116,6 +118,7 @@ class Home extends React.Component {
                 'Authorization' : Mystate.token
             }
 		}).then(value => {
+			LoadStory = false;
 			let DataEach = value.data.data;
 			this.setState(state => {
 				return{ APP_Data_Story: DataEach }
@@ -199,6 +202,10 @@ class Home extends React.Component {
 		this.setState(state => {
 			return {APP_Image_Story: e}
 		})
+		IDModalStory.addEventListener('show.bs.modal', events => {
+			IDModalStory.querySelector('img').setAttribute('src', e)
+			IDModalStory.querySelector('img').setAttribute('alt', e)
+		})
 		ModalStory.show()
 	}
 	render() {
@@ -220,7 +227,7 @@ class Home extends React.Component {
 				                <div className="modal-body">
 				                    <div className="row">
 				                        <div className="col-12 pb-2">
-				                            <img src={this.state.APP_Image_Story} alt={this.state.APP_Image_Story} className="img-fluid" />
+				                            <img className="img-fluid" />
 				                        </div>
 				                        <div className="col-12">
 				                            <div className="row">
@@ -256,7 +263,39 @@ class Home extends React.Component {
 	                    <div className="card border-0 shadow-sm mt-2">
 	                        <div className="card-body">
 	                            <div className="story pb-2 bg-white">
-		                            {this.state.APP_Data_Story.map((val, key) => {
+		                            {LoadStory ? (
+		                            	<React.Fragment>
+		                            	<div className="col-3 float-left" style={{backgroundColor: 'whitesmoke', margin: '5px', height: '179.53px'}}>
+		                            		<div className="d-flex justify-content-center" style={{marginTop: '70px'}}>
+												<div className="spinner-border text-primary" role="status">
+    												<span className="sr-only">Loading...</span>
+  												</div>
+											</div>
+										</div>
+		                            	<div className="col-3 float-left" style={{backgroundColor: 'whitesmoke', margin: '5px', height: '179.53px'}}>
+		                            		<div className="d-flex justify-content-center" style={{marginTop: '70px'}}>
+												<div className="spinner-border text-primary" role="status">
+    												<span className="sr-only">Loading...</span>
+  												</div>
+											</div>
+										</div>
+		                            	<div className="col-3 float-left" style={{backgroundColor: 'whitesmoke', margin: '5px', height: '179.53px'}}>
+		                            		<div className="d-flex justify-content-center" style={{marginTop: '70px'}}>
+												<div className="spinner-border text-primary" role="status">
+    												<span className="sr-only">Loading...</span>
+  												</div>
+											</div>
+										</div>
+		                            	<div className="col-3 float-left" style={{backgroundColor: 'whitesmoke', margin: '5px', height: '179.53px'}}>
+		                            		<div className="d-flex justify-content-center" style={{marginTop: '70px'}}>
+												<div className="spinner-border text-primary" role="status">
+    												<span className="sr-only">Loading...</span>
+  												</div>
+											</div>
+										</div>
+		                            	</React.Fragment>
+		                            ):
+		                            this.state.APP_Data_Story.map((val, key) => {
 		                            	if(val.image) {
 			                            	return (
 			                            		<img onClick={this.ClickStory} key={key} src={Mystate.pathImage + val.image} alt={val.image} className="col-3 float-left" />
@@ -270,21 +309,24 @@ class Home extends React.Component {
 			                            	)
 		                            	}
 		                            })}
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
-	                                <img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+		                            {LoadStory ?
+		                            	(
+		                            		<React.Fragment>
+		                            		<img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" style={{filter: 'blur(5px)'}} />
+		                            		<img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" style={{filter: 'blur(5px)'}} />
+		                            		<img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" style={{filter: 'blur(5px)'}} />
+		                            		<img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" style={{filter: 'blur(5px)'}} />
+		                            		</React.Fragment>
+		                            	):
+		                            	(
+		                            		<React.Fragment>
+		                            		<img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+		                            		<img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+		                            		<img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+		                            		<img onClick={this.ClickStory} src="./media/steve-halama-T9A31lqrXnU-unsplash.jpg" alt="image" className="col-3 float-left" />
+		                            		</React.Fragment>
+		                            	)
+		                        	}
 	                            </div>
 	                            <div className="next-story rounded-circle shadow-sm">
 	                                <span className="material-icons p-1">chevron_right</span>
@@ -317,7 +359,7 @@ class Home extends React.Component {
 	                                    </label>
 	                                </div>
 	                                <div className="dropdown-divider"></div>
-	                                <button type="submit" className="btn btn-primary w-100">Post now</button>
+	                                <button type="submit" className="btn btn-primary w-100" disabled={false}>Post now</button>
 	                            </form>
 	                        </div>
 	                    </div>
